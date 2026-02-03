@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,64 +7,73 @@
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-    overflow: hidden;
-    color: white;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+  overflow: hidden;
+  color: white;
 }
 
 h1 { margin-top: 70px; }
 
 .btn {
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    margin: 10px;
-    cursor: pointer;
+  padding: 12px 25px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  margin: 10px;
+  cursor: pointer;
 }
 
-#yesBtn { background: #ff4d6d; color: white; }
-#noBtn { background: white; color: #ff4d6d; position: absolute; }
+#yesBtn { background:#ff4d6d; color:white; }
+#noBtn { background:white; color:#ff4d6d; position:absolute; }
 
-#loveScreen { display: none; }
+#loveScreen { display:none; }
 
 #loveImg {
-    width: 200px;
-    border-radius: 20px;
-    margin: 15px 0;
-    box-shadow: 0 0 20px white;
+  width:200px;
+  border-radius:20px;
+  margin:15px 0;
+  box-shadow:0 0 20px white;
 }
 
-/* Hearts animation */
 .heart {
-    position: absolute;
-    font-size: 22px;
-    animation: float 5s linear infinite;
+  position:absolute;
+  font-size:22px;
+  animation:float 5s linear infinite;
 }
 @keyframes float {
-    from { transform: translateY(100vh); }
-    to { transform: translateY(-10vh); }
+  from { transform:translateY(100vh); }
+  to { transform:translateY(-10vh); }
 }
 
-/* Game area */
+.firework {
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:white;
+  border-radius:50%;
+  animation:explode 1s ease-out forwards;
+}
+@keyframes explode {
+  to { transform:translate(var(--x),var(--y)); opacity:0; }
+}
+
 #gameArea {
-    position: relative;
-    height: 250px;
-    border: 2px dashed white;
-    margin-top: 20px;
-    overflow: hidden;
+  position:relative;
+  height:250px;
+  border:2px dashed white;
+  margin-top:20px;
+  overflow:hidden;
 }
+
 .fallHeart {
-    position: absolute;
-    font-size: 25px;
-    animation: fall 3s linear forwards;
+  position:absolute;
+  font-size:25px;
+  animation:fall 3s linear forwards;
 }
-@keyframes fall {
-    to { transform: translateY(260px); }
-}
+@keyframes fall { to { transform:translateY(260px); } }
 </style>
 </head>
 
@@ -75,23 +84,24 @@ h1 { margin-top: 70px; }
 <button id="noBtn" class="btn">NO 😢</button>
 
 <div id="loveScreen">
-    <h1>I LOVE YOU KRITIKA ❤️</h1>
-    <img id="loveImg" src="k1.jpeg">
+  <h1>I LOVE YOU KRITIKA ❤️</h1>
+  <img id="loveImg" src="k1.jpg">
 
-    <button class="btn" onclick="showReason()">💌 Reasons I Love You</button>
-    <p id="reasonText"></p>
+  <button class="btn" onclick="showReason()">💌 Reasons I Love You</button>
+  <p id="reasonText"></p>
 
-    <h2>Catch 5 Hearts to Unlock Surprise 🎮</h2>
-    <div id="gameArea"></div>
-    <p id="scoreText">Score: 0</p>
-    <p id="winMsg"></p>
+  <h2>Catch 5 Hearts to Unlock Surprise 🎮</h2>
+  <div id="gameArea"></div>
+  <p id="scoreText">Score: 0</p>
+  <p id="winMsg"></p>
 </div>
 
 <audio id="bgMusic" loop>
-    <source src="TereBina.mp3" type="audio/mpeg">
+  <source src="terebina.mp3" type="audio/mpeg">
 </audio>
 
 <script>
+const bgMusic = document.getElementById("bgMusic");
 const reasons = [
 "You make my bad days better ☀️",
 "Your smile is my favorite sight 😍",
@@ -106,66 +116,80 @@ const reasonText = document.getElementById("reasonText");
 const gameArea = document.getElementById("gameArea");
 const scoreText = document.getElementById("scoreText");
 const winMsg = document.getElementById("winMsg");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const loveScreen = document.getElementById("loveScreen");
 
 function showReason() {
-    reasonText.innerText = reasons[Math.floor(Math.random() * reasons.length)];
+  reasonText.innerText = reasons[Math.floor(Math.random()*reasons.length)];
 }
 
 function spawnHeart() {
-    const heart = document.createElement("div");
-    heart.classList.add("fallHeart");
-    heart.innerHTML = "💖";
-    heart.style.left = Math.random() * 90 + "%";
-    gameArea.appendChild(heart);
+  const heart = document.createElement("div");
+  heart.classList.add("fallHeart");
+  heart.innerHTML="💖";
+  heart.style.left=Math.random()*90+"%";
+  gameArea.appendChild(heart);
 
-    heart.onclick = () => {
-        heart.remove();
-        score++;
-        scoreText.innerText = "Score: " + score;
-        if (score >= 5) {
-            winMsg.innerText = "You unlocked my heart forever 💍❤️";
-        }
-    };
+  heart.onclick=()=>{
+    heart.remove();
+    score++;
+    scoreText.innerText="Score: "+score;
+    if(score>=5) winMsg.innerText="You unlocked my heart forever 💍❤️";
+  };
+  setTimeout(()=>heart.remove(),3000);
+}
+setInterval(spawnHeart,1000);
 
-    setTimeout(() => heart.remove(), 3000);
+noBtn.addEventListener("mouseover",()=>{
+  noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
+  noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
+});
+
+yesBtn.addEventListener("click",()=>{
+  document.querySelector("h1").style.display="none";
+  yesBtn.style.display="none";
+  noBtn.style.display="none";
+  loveScreen.style.display="block";
+  startHearts();
+  startFireworks();
+});
+
+function startHearts(){
+  setInterval(()=>{
+    const h=document.createElement("div");
+    h.classList.add("heart");
+    h.innerHTML="💖";
+    h.style.left=Math.random()*100+"vw";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),5000);
+  },300);
 }
 
-setInterval(spawnHeart, 1000);
+function startFireworks(){
+  setInterval(()=>{
+    const x=Math.random()*window.innerWidth;
+    const y=Math.random()*window.innerHeight/2;
+    for(let i=0;i<20;i++){
+      const fw=document.createElement("div");
+      fw.classList.add("firework");
+      fw.style.left=x+"px";
+      fw.style.top=y+"px";
+      fw.style.setProperty('--x',(Math.random()-0.5)*200+"px");
+      fw.style.setProperty('--y',(Math.random()-0.5)*200+"px");
+      document.body.appendChild(fw);
+      setTimeout(()=>fw.remove(),1000);
+    }
+  },800);
+}
 
-// Running NO button
-document.getElementById("noBtn").addEventListener("mouseover", () => {
-    const x = Math.random() * (window.innerWidth - 100);
-    const y = Math.random() * (window.innerHeight - 50);
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-});
-
-// YES click
-document.getElementById("yesBtn").addEventListener("click", () => {
-    document.querySelector("h1").style.display = "none";
-    yesBtn.style.display = "none";
-    noBtn.style.display = "none";
-    loveScreen.style.display = "block";
-
-    // floating hearts
-    setInterval(() => {
-        const h = document.createElement("div");
-        h.classList.add("heart");
-        h.innerHTML = "💖";
-        h.style.left = Math.random() * 100 + "vw";
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), 5000);
-    }, 300);
-});
-
-// Music
-document.body.addEventListener("click", () => {
-    bgMusic.play();
-}, { once: true });
+document.body.addEventListener("click",()=>{ bgMusic.play(); },{once:true});
 </script>
 
 </body>
 </html>
+
+
 
 
 
